@@ -26,4 +26,19 @@ export const protect = async (req, res, next) => {
     res.status(401).json({ message: "Token invalid or expired" });
   }
 };
+
+export const isAdmin = (req, res, next) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied: Admin only",
+      });
+    }
+    next();
+  } catch (err) {
+    return res.status(500).json({ message: "Server error", err });
+  }
+};
+
 export default {protect}

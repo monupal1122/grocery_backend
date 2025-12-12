@@ -2,7 +2,7 @@ import productmodel from "../model/product.js";
 import categorymodel from "../model/category.js";
 import subcategorymodel from "../model/subcategory.js";
 
-// ================= CATEGORY =================
+// === CATEGORY ===
 
 // Create category
 async function catgoryc(req, res) {
@@ -70,7 +70,7 @@ async function catgoryd(req, res) {
   }
 }
 
-// ================= PRODUCT =================
+// === PRODUCT ===
 
 // Create product under category and subcategory
 async function productc(req, res) {

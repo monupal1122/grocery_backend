@@ -3,7 +3,7 @@ import Product from "../model/product.js";
 import Address from "../model/addressModel.js";
 import Cart from "../model/cartModel.js";
 import Profile from "../model/Profile.js";
-import { sendOrderConfirmationEmail, sendOrderStatusUpdateEmail } from "../utils/emailService.js";
+//import { sendOrderConfirmationEmail, sendOrderStatusUpdateEmail } from "../utils/emailService.js";
 
 /**
  * @desc Create new order
