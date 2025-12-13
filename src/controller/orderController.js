@@ -63,7 +63,7 @@ export const createOrder = async (req, res) => {
       .populate("addressId");
     console.log(populatedOrder);
     
-    await sendOrderConfirmationEmail(populatedOrder);
+    // await sendOrderConfirmationEmail(populatedOrder);
 
     res.status(201).json({
       message: "Order placed successfully",
