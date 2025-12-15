@@ -1,7 +1,18 @@
 import productmodel from "../model/product.js";
 import categorymodel from "../model/category.js";
 import subcategorymodel from "../model/subcategory.js";
-import cloudinary from "../config/cloudinary.js";
+import cloudinary, { isCloudinaryConfigured } from "../config/cloudinary.js";
+
+const ensureCloudinary = (res) => {
+  if (isCloudinaryConfigured) return true;
+  res
+    .status(500)
+    .json({
+      message:
+        "Image upload unavailable: Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET.",
+    });
+  return false;
+};
 
 // === CATEGORY ===
 
@@ -14,10 +25,13 @@ async function catgoryc(req, res) {
       return res.status(400).json({ message: "Image is required" });
     }
 
+    if (!ensureCloudinary(res)) return;
+
     cloudinary.uploader.upload_stream(
       { folder: "categories" },
       async (error, result) => {
         if (error) {
+          console.error("Cloudinary upload failed (category create):", error);
           return res.status(500).json({ message: "Image upload failed" });
         }
 
@@ -61,10 +75,13 @@ async function catgoryu(req, res) {
     const updateData = { name, desc };
 
     if (req.file) {
+      if (!ensureCloudinary(res)) return;
+
       cloudinary.uploader.upload_stream(
         { folder: "categories" },
         async (error, result) => {
           if (error) {
+            console.error("Cloudinary upload failed (category update):", error);
             return res.status(500).json({ message: "Image upload failed" });
           }
 
@@ -129,15 +146,16 @@ async function productc(req, res) {
       return res.status(400).json({ message: "Images required" });
     }
 
-    const imageUploads = req.files.map(file =>
+    if (!ensureCloudinary(res)) return;
+
+    const imageUploads = req.files.map((file) =>
       new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          { folder: "products" },
-          (error, result) => {
+        cloudinary.uploader
+          .upload_stream({ folder: "products" }, (error, result) => {
             if (error) reject(error);
             else resolve(result.secure_url);
-          }
-        ).end(file.buffer);
+          })
+          .end(file.buffer);
       })
     );
 
@@ -160,6 +178,7 @@ async function productc(req, res) {
     });
 
   } catch (error) {
+    console.error("Product create failed:", error);
     res.status(500).json({ message: error.message });
   }
 }
@@ -211,15 +230,16 @@ async function productu(req, res) {
     const updateData = { name, price, desc, category: categoryId };
 
     if (req.files && req.files.length > 0) {
-      const imageUploads = req.files.map(file =>
+      if (!ensureCloudinary(res)) return;
+
+      const imageUploads = req.files.map((file) =>
         new Promise((resolve, reject) => {
-          cloudinary.uploader.upload_stream(
-            { folder: "products" },
-            (error, result) => {
+          cloudinary.uploader
+            .upload_stream({ folder: "products" }, (error, result) => {
               if (error) reject(error);
               else resolve(result.secure_url);
-            }
-          ).end(file.buffer);
+            })
+            .end(file.buffer);
         })
       );
 
@@ -233,6 +253,7 @@ async function productu(req, res) {
       updatedProduct,
     });
   } catch (error) {
+    console.error("Product update failed:", error);
     res.status(500).json({ message: error.message });
   }
 }

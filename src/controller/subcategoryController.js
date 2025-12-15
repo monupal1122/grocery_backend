@@ -1,7 +1,16 @@
 import productmodel from "../model/product.js";
 import categorymodel from "../model/category.js";
 import subcategorymodel from "../model/subcategory.js";
-import cloudinary from "../config/cloudinary.js";
+import cloudinary, { isCloudinaryConfigured } from "../config/cloudinary.js";
+
+const ensureCloudinary = (res) => {
+  if (isCloudinaryConfigured) return true;
+  res.status(500).json({
+    message:
+      "Image upload unavailable: Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET.",
+  });
+  return false;
+};
 
 
 // === SUBCATEGORY ===
@@ -19,6 +28,8 @@ async function subcategoryc(req, res) {
     let imageUrl = "";
 
     if (req.file) {
+      if (!ensureCloudinary(res)) return;
+
       const uploadResult = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
           { folder: "subcategories" },
@@ -46,6 +57,7 @@ async function subcategoryc(req, res) {
       subcategory,
     });
   } catch (error) {
+    console.error("Subcategory create failed:", error);
     res.status(500).json({
       message: "Error creating subcategory",
       error: error.message,
@@ -91,6 +103,8 @@ async function subcategoryu(req, res) {
     let imageUrl = subcategory.image; // keep old image
 
     if (req.file) {
+      if (!ensureCloudinary(res)) return;
+
       const uploadResult = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
           { folder: "subcategories" },
@@ -116,6 +130,7 @@ async function subcategoryu(req, res) {
       subcategory,
     });
   } catch (error) {
+    console.error("Subcategory update failed:", error);
     res.status(500).json({
       message: "Error updating subcategory",
       error: error.message,
