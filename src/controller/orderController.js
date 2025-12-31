@@ -3,7 +3,6 @@ import Product from "../model/product.js";
 import Address from "../model/addressModel.js";
 import Cart from "../model/cartModel.js";
 import Profile from "../model/Profile.js";
-//import { sendOrderConfirmationEmail, sendOrderStatusUpdateEmail } from "../utils/emailService.js";
 
 /**
  * @desc Create new order
@@ -127,7 +126,7 @@ export const updateOrderStatus = async (req, res) => {
     const order = await Order.findById(req.params.id)
       .populate("userId", "email username")
       .populate("addressId");
-    
+
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
@@ -144,8 +143,8 @@ export const updateOrderStatus = async (req, res) => {
       const populatedOrder = await Order.findById(order._id)
         .populate("userId", "email username")
         .populate("addressId");
-      
-      await sendOrderStatusUpdateEmail(populatedOrder, oldDeliveryStatus, deliveryStatus);
+
+      // await sendOrderStatusUpdateEmail(populatedOrder, oldDeliveryStatus, deliveryStatus);
     }
 
     res.status(200).json({ message: "Order status updated", order });
