@@ -30,7 +30,7 @@ const __dirname = path.dirname(__filename);
 app.use(cors())
 // middlewares
 app.use(express.json()); // <-- parses JSON body
-app.use(express.urlencoded({ extended: true })); // <-- parses form data
+ // <-- parses form data
 app.use(cookieParser());
 
 // routes

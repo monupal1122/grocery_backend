@@ -1,16 +1,4 @@
 import Banner from "../model/bannerModel.js";
-import cloudinary, { isCloudinaryConfigured } from "../config/cloudinary.js";
-
-const ensureCloudinary = (res) => {
-  if (isCloudinaryConfigured) return true;
-  res
-    .status(500)
-    .json({
-      message:
-        "Image upload unavailable: Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET.",
-    });
-  return false;
-};
 
 // 🟢 Create Banner (with image upload)
 export const createBanner = async (req, res) => {
@@ -24,19 +12,7 @@ export const createBanner = async (req, res) => {
     // Determine image source: uploaded file OR URI from body
     let finalImageUrl = imageUrl;
     if (req.file) {
-      if (!ensureCloudinary(res)) return;
-
-      const uploadResult = await new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          { folder: "banners" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        ).end(req.file.buffer);
-      });
-
-      finalImageUrl = uploadResult.secure_url;
+      finalImageUrl = `/uploads/banners/${req.file.filename}`;
     }
 
     if (!finalImageUrl) {
@@ -105,21 +81,9 @@ export const updateBanner = async (req, res) => {
       updateData.endDate = req.body.endDate && req.body.endDate !== "" ? new Date(req.body.endDate) : null;
     }
 
-    // If new image uploaded, use Cloudinary
+    // If new image uploaded
     if (req.file) {
-      if (!ensureCloudinary(res)) return;
-
-      const uploadResult = await new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          { folder: "banners" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        ).end(req.file.buffer);
-      });
-
-      updateData.imageUrl = uploadResult.secure_url;
+      updateData.imageUrl = `/uploads/banners/${req.file.filename}`;
     }
 
     const updated = await Banner.findByIdAndUpdate(id, updateData, { new: true });
