@@ -134,7 +134,7 @@ async function catgoryd(req, res) {
 // Create product under category and subcategory
 async function productc(req, res) {
   try {
-    const { name, price, desc, categoryId, subcategoryId } = req.body;
+    const { name, price, desc, categoryId, subcategoryId,discount ,stock } = req.body;
 
     const category = await categorymodel.findById(categoryId);
     if (!category) return res.status(404).json({ message: "Category not found" });
@@ -166,6 +166,8 @@ async function productc(req, res) {
       images,
       price,
       desc,
+      stock,
+      discount,
       category: categoryId,
       subcategory: subcategoryId,
     });
@@ -225,9 +227,9 @@ async function getProductsBySubcategory(req, res) {
 async function productu(req, res) {
   try {
     const { id } = req.params;
-    const { name, price, desc, categoryId } = req.body;
+    const { name, price, desc, categoryId ,discount ,stock } = req.body;
 
-    const updateData = { name, price, desc, category: categoryId };
+    const updateData = { name, price, desc, category: categoryId ,discount ,stock};
 
     if (req.files && req.files.length > 0) {
       if (!ensureCloudinary(res)) return;
