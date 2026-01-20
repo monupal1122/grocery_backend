@@ -14,6 +14,7 @@ export const createOrUpdateProfile = async (req, res) => {
     const userId = req.user._id;
     const { fullName, phoneNumber, gender, dateOfBirth, bio, email } = req.body;
 console.log(fullName,phoneNumber,bio,gender,dateOfBirth,email);
+console.log('req.file:', req.file);
 
 
     // Upload image to Cloudinary if provided
@@ -44,7 +45,9 @@ console.log(fullName,phoneNumber,bio,gender,dateOfBirth,email);
       profile.dateOfBirth = dateOfBirth || profile.dateOfBirth;
       profile.bio = bio || profile.bio;
       profile.email = email || profile.email;
-      if (profileImage) profile.profileImage = profileImage;
+      
+      if (profileImage)
+         profile.profileImage = profileImage;
 
       await profile.save();
 
@@ -95,7 +98,22 @@ export const getMyProfile = async (req, res) => {
       return res.status(404).json({ message: "Profile not found" });
     }
 
-    res.status(200).json(profile);
+    // Always return avatar field (profileImage or null)
+    const response = {
+      _id: profile._id,
+      userId: profile.userId,
+      fullName: profile.fullName,
+      phoneNumber: profile.phoneNumber,
+      gender: profile.gender,
+      dateOfBirth: profile.dateOfBirth,
+      bio: profile.bio,
+      email: profile.email,
+      isVerified: profile.isVerified,
+      createdAt: profile.createdAt,
+      updatedAt: profile.updatedAt,
+      avatar: profile.profileImage || null
+    };
+    res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
