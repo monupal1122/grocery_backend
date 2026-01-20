@@ -1,4 +1,8 @@
+
 import Profile from "../model/Profile.js";
+import User from "../model/user.js";
+import cloudinary from "../config/cloudinary.js";
+import fs from "fs";
 
 /**
  * @desc Create or update profile
@@ -9,11 +13,28 @@ export const createOrUpdateProfile = async (req, res) => {
   try {
     const userId = req.user._id;
     const { fullName, phoneNumber, gender, dateOfBirth, bio, email } = req.body;
+console.log(fullName,phoneNumber,bio,gender,dateOfBirth,email);
 
-    // Image from multer
-    let profileImage = req.file ? `/uploads/profile/${req.file.filename}` : undefined;
+
+    // Upload image to Cloudinary if provided
+    let profileImage;
+    if (req.file) {
+      try {
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "profile_images",
+          resource_type: "image",
+        });
+        profileImage = result.secure_url;
+        // Remove local file after upload
+        fs.unlinkSync(req.file.path);
+      } catch (cloudErr) {
+        return res.status(500).json({ message: "Cloudinary upload failed", error: cloudErr.message });
+      }
+    }
+
 
     let profile = await Profile.findOne({ userId });
+
 
     if (profile) {
       // Update existing profile
@@ -26,6 +47,11 @@ export const createOrUpdateProfile = async (req, res) => {
       if (profileImage) profile.profileImage = profileImage;
 
       await profile.save();
+
+      // Update User table with image URL if provided
+      if (profileImage) {
+        await User.findByIdAndUpdate(userId, { $set: { profileImage } });
+      }
 
       return res.status(200).json({ message: "Profile updated successfully", profile });
     }
@@ -43,6 +69,12 @@ export const createOrUpdateProfile = async (req, res) => {
     });
 
     await newProfile.save();
+
+    // Update User table with image URL if provided
+    if (profileImage) {
+      await User.findByIdAndUpdate(userId, { $set: { profileImage } });
+    }
+
     res.status(201).json({ message: "Profile created successfully", profile: newProfile });
   } catch (error) {
     res.status(500).json({ message: error.message });

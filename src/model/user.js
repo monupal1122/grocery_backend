@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    profileImage: { type: String }, // Cloudinary image URL
   },
   { timestamps: true }
 );
