@@ -6,7 +6,7 @@ import {
   getAllProfiles,
 } from "../controller/profileController.js";
 import {protect} from "../middleware/authMiddleware.js";
-import upload from "../middleware/uploadProfile.js";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
