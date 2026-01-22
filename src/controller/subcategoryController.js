@@ -165,6 +165,25 @@ async function getProductsBySubcategory(req, res) {
     res.status(500).json({ message: "Error fetching products", error: error.message });
   }
 }
+
+// Toggle active status for subcategory
+async function toggleActiveSubcategory(req, res) {
+  try {
+    const { id } = req.params;
+    const subcategory = await subcategorymodel.findById(id);
+    if (!subcategory) {
+      return res.status(404).json({ message: "Subcategory not found" });
+    }
+    subcategory.isActive = !subcategory.isActive;
+    await subcategory.save();
+    res.status(200).json({
+      message: `Subcategory ${subcategory.isActive ? 'activated' : 'deactivated'} successfully`,
+      subcategory,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error toggling subcategory active status", error: error.message });
+  }
+}
 //
 // async function uploadimages(req, res) {
 //   try {
@@ -190,4 +209,5 @@ export default {
   subcategoryu,
   subcategories,
   getSubcategoriesByCategory,
+  toggleActiveSubcategory,
 };

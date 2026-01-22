@@ -273,6 +273,44 @@ async function productd(req, res) {
   }
 }
 
+// Toggle active status for category
+async function toggleActiveCategory(req, res) {
+  try {
+    const { id } = req.params;
+    const category = await categorymodel.findById(id);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    category.isActive = !category.isActive;
+    await category.save();
+    res.status(200).json({
+      message: `Category ${category.isActive ? 'activated' : 'deactivated'} successfully`,
+      category,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error toggling category active status", error: error.message });
+  }
+}
+
+// Toggle active status for product
+async function toggleActiveProduct(req, res) {
+  try {
+    const { id } = req.params;
+    const product = await productmodel.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    product.isActive = !product.isActive;
+    await product.save();
+    res.status(200).json({
+      message: `Product ${product.isActive ? 'activated' : 'deactivated'} successfully`,
+      product,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error toggling product active status", error: error.message });
+  }
+}
+
 // Export
 export default {
   getProductsByCategory,
@@ -285,4 +323,6 @@ export default {
   productu,
   productd,
   productc,
+  toggleActiveCategory,
+  toggleActiveProduct,
 };

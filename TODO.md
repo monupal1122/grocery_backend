@@ -1,0 +1,9 @@
+- [x] Update src/model/category.js to add isActive field
+- [x] Update src/model/subcategory.js to add isActive field
+- [x] Update src/model/product.js to add isActive field
+- [x] Add toggleActiveCategory function in src/controller/category.controller.js
+- [x] Add toggleActiveSubcategory function in src/controller/subcategoryController.js
+- [x] Add toggleActiveProduct function in src/controller/category.controller.js
+- [x] Add PUT /categories/:id/toggle-active route in src/router/category.router.js
+- [x] Add PUT /subcategories/:id/toggle-active route in src/router/subcategoryRoutes.js
+- [x] Add PUT /products/:id/toggle-active route in src/router/category.router.js

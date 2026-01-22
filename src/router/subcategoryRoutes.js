@@ -9,6 +9,7 @@ router.post("/subcategories", upload.single("image"), subcategoryController.subc
 router.get("/subcategories", subcategoryController.subcategories);                // get all subcategories
 router.get("/subcategories/category/:categoryId", subcategoryController.getSubcategoriesByCategory); // get subcategories by category
 router.put("/subcategories/:id", upload.single("image"), subcategoryController.subcategoryu);            // update subcategory
+router.put("/subcategories/:id/toggle-active", subcategoryController.toggleActiveSubcategory);          // toggle active subcategory
 router.delete("/subcategories/:id", subcategoryController.subcategoryd);         // delete subcategory
 
 // PRODUCT BY SUBCATEGORY ROUTES
