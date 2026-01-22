@@ -18,7 +18,7 @@ const ensureCloudinary = (res) => {
 // Create subcategory under category
 async function subcategoryc(req, res) {
   try {
-    const { name, desc, categoryId } = req.body;
+    const { name, desc, categoryId, status } = req.body;
 
     const category = await categorymodel.findById(categoryId);
     if (!category) {
@@ -48,6 +48,7 @@ async function subcategoryc(req, res) {
       image: imageUrl,
       desc,
       category: categoryId,
+      status: status === 'true' || status === true
     });
 
     await subcategory.save();
@@ -93,7 +94,7 @@ async function getSubcategoriesByCategory(req, res) {
 async function subcategoryu(req, res) {
   try {
     const { id } = req.params;
-    const { name, desc, categoryId } = req.body;
+    const { name, desc, categoryId, status } = req.body;
 
     const subcategory = await subcategorymodel.findById(id);
     if (!subcategory) {
@@ -122,6 +123,7 @@ async function subcategoryu(req, res) {
     subcategory.desc = desc || subcategory.desc;
     subcategory.category = categoryId || subcategory.category;
     subcategory.image = imageUrl;
+    if (status !== undefined) subcategory.status = status === 'true' || status === true;
 
     await subcategory.save();
 

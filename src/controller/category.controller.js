@@ -39,7 +39,7 @@ async function catgoryc(req, res) {
           name,
           desc,
           image: result.secure_url, // 🔥 CLOUDINARY URL
-          status: status || true
+          status: status === 'true' || status === true
         });
 
         await category.save();
@@ -74,7 +74,7 @@ async function catgoryu(req, res) {
     const { name, desc, status } = req.body;
 
     const updateData = { name, desc };
-    if (status !== undefined) updateData.status = status;
+    if (status !== undefined) updateData.status = status === 'true' || status === true;
 
     if (req.file) {
       if (!ensureCloudinary(res)) return;
@@ -136,7 +136,7 @@ async function catgoryd(req, res) {
 // Create product under category and subcategory
 async function productc(req, res) {
   try {
-    const { name, price, desc, categoryId, subcategoryId,discount ,stock } = req.body;
+    const { name, price, desc, categoryId, subcategoryId,discount ,stock,status } = req.body;
 
     const category = await categorymodel.findById(categoryId);
     if (!category) return res.status(404).json({ message: "Category not found" });
@@ -172,6 +172,7 @@ async function productc(req, res) {
       discount,
       category: categoryId,
       subcategory: subcategoryId,
+      status: status === 'true' || status === true
     });
 
     await product.save();
@@ -229,9 +230,10 @@ async function getProductsBySubcategory(req, res) {
 async function productu(req, res) {
   try {
     const { id } = req.params;
-    const { name, price, desc, categoryId ,discount ,stock } = req.body;
+    const { name, price, desc, categoryId ,discount ,stock, status } = req.body;
 
     const updateData = { name, price, desc, category: categoryId ,discount ,stock};
+    if (status !== undefined) updateData.status = status === 'true' || status === true;
 
     if (req.files && req.files.length > 0) {
       if (!ensureCloudinary(res)) return;
