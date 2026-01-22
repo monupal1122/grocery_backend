@@ -174,10 +174,10 @@ async function toggleActiveSubcategory(req, res) {
     if (!subcategory) {
       return res.status(404).json({ message: "Subcategory not found" });
     }
-    subcategory.isActive = !subcategory.isActive;
+    subcategory.status = !subcategory.status;
     await subcategory.save();
     res.status(200).json({
-      message: `Subcategory ${subcategory.isActive ? 'activated' : 'deactivated'} successfully`,
+      message: `Subcategory ${subcategory.status ? 'activated' : 'deactivated'} successfully`,
       subcategory,
     });
   } catch (error) {

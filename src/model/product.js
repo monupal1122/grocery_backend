@@ -18,7 +18,7 @@ const productSchema = new mongoose.Schema(
     discount: { type: Number, default: 0 },
     category: { type: mongoose.Schema.Types.ObjectId, ref: "category", required: true },
     subcategory: { type: mongoose.Schema.Types.ObjectId, ref: "Subcategory", required: true },
-    isActive: { type: Boolean, default: true }
+    status: { type: Boolean, default: true }
   },
   { timestamps: true }
 );

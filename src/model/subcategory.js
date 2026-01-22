@@ -7,7 +7,7 @@ const subcategorySchema = new mongoose.Schema(
     image: { type: String, required: true },
     desc: { type: String, required: true },
     category: { type: mongoose.Schema.Types.ObjectId, ref: "category", required: true },
-    isActive: { type: Boolean, default: true }
+    status: { type: Boolean, default: true }
   },
   { timestamps: true }
 );

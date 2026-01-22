@@ -19,7 +19,7 @@ const ensureCloudinary = (res) => {
 // Create category
 async function catgoryc(req, res) {
   try {
-    const { name, desc } = req.body;
+    const { name, desc, status } = req.body;
 
     if (!req.file) {
       return res.status(400).json({ message: "Image is required" });
@@ -39,6 +39,7 @@ async function catgoryc(req, res) {
           name,
           desc,
           image: result.secure_url, // 🔥 CLOUDINARY URL
+          status: status || true
         });
 
         await category.save();
@@ -70,9 +71,10 @@ async function catgorys(req, res) {
 async function catgoryu(req, res) {
   try {
     const { id } = req.params;
-    const { name, desc } = req.body;
+    const { name, desc, status } = req.body;
 
     const updateData = { name, desc };
+    if (status !== undefined) updateData.status = status;
 
     if (req.file) {
       if (!ensureCloudinary(res)) return;
@@ -281,10 +283,10 @@ async function toggleActiveCategory(req, res) {
     if (!category) {
       return res.status(404).json({ message: "Category not found" });
     }
-    category.isActive = !category.isActive;
+    category.status = !category.status;
     await category.save();
     res.status(200).json({
-      message: `Category ${category.isActive ? 'activated' : 'deactivated'} successfully`,
+      message: `Category ${category.status ? 'activated' : 'deactivated'} successfully`,
       category,
     });
   } catch (error) {
@@ -300,10 +302,10 @@ async function toggleActiveProduct(req, res) {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-    product.isActive = !product.isActive;
+    product.status = !product.status;
     await product.save();
     res.status(200).json({
-      message: `Product ${product.isActive ? 'activated' : 'deactivated'} successfully`,
+      message: `Product ${product.status ? 'activated' : 'deactivated'} successfully`,
       product,
     });
   } catch (error) {
