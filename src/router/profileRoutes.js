@@ -13,6 +13,6 @@ const router = express.Router();
 router.post("/", upload.single("avatar"), protect, createOrUpdateProfile);
 router.get("/my", protect, getMyProfile);
 router.delete("/", protect, deleteProfile);
-router.get("/all", protect, getAllProfiles);
+router.get("/all",  getAllProfiles);
 
 export default router;
